@@ -1,6 +1,8 @@
 __pycache__
 
-.session
+*.session
+
+*.session-journal
 
 config.py
 

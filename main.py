@@ -101,7 +101,7 @@ async def main() -> None:
         elif x == "2":
             pass
         elif x == "3":
-            pass
+            chats = await get_chats()
         elif x == "4":
             break
 

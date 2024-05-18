@@ -16,7 +16,7 @@ def return_errors(error: str) -> None:
 async def get_chat_names(chat: list) -> list:
     names = {}
     #
-    # Желательно переделать на условную конструкцию с проверкой является ли чат группой
+    # Желательно переделать на условную конструкцию с проверкой на то является ли чат группой
     #
     try:
         for name in await client.get_participants(chat[0]):
@@ -28,7 +28,7 @@ async def get_chat_names(chat: list) -> list:
     return names
 
 async def get_chats() -> list:
-    count = 0
+    count = 1
     chats = []
     print("~ ~ ~ Список чатов ~ ~ ~")
     async for chat in client.iter_dialogs():
@@ -44,13 +44,56 @@ async def main() -> None:
         x = input("\n1) Посмотреть чат"
                   "\n2) Отправить сообщение"
                   "\n3) Обновить чаты"
-                  "\n4) Выход")
+                  "\n4) Выход\n")
         if x == "1":
             try:
                 chat_id = int(input("\nВведите номер чата: "))
                 if 0 < chat_id < len(chats):
                     names = await get_chat_names(chats[chat_id - 1])
-                    print(names)
+                    mess_count = int(input("\nЧисло сообщений: "))
+                    print(f"\nЧат { chats[chat_id - 1][1] }")
+                    result = []
+                    count = 0
+                    async for message in client.iter_messages(chats[chat_id - 1][0]):
+                        text = ""
+                        media = ""
+                        if count < mess_count:
+                            data = message.to_dict()
+                            if data["_"] == "Message":
+                                from_id = str(data["peer_id"][list(data["peer_id"].keys())[1]])
+                                try:
+                                    if data["from_id"] != None:
+                                        from_id = str(data["from_id"][list(data["from_id"].keys())[1]])
+                                except:
+                                    pass
+                                try:
+                                    text += names[int(from_id)]
+                                except:
+                                    text += chats[chat_id - 1][1]
+                                text += " > " + data["message"]
+                                try:
+                                    if data["media"] != None:
+                                        media = "~document~"
+                                        if data["media"]["video"] != False:
+                                            media += "video~"
+                                        if data["media"]["voice"] != False:
+                                            media += "voice~"
+                                        if data["media"]["round"] != False:
+                                            media += "round~"
+                                        if data["media"]["document"] != False:
+                                            if data["media"]["document"]["mime_type"] == "image/webp" or data["media"]["document"]["mime_type"] == "video/webp":
+                                                media += "sticker~"
+                                            elif data["media"]["document"]["mime_type"] == "":
+                                                media += '"' + data["media"]["document"]["attributes"][0]["file_name"] + '"~'
+                                    text += media
+                                except:
+                                    pass
+                                result.append(text)
+                            count += 1
+                        else:
+                            break
+                    result = '\n'.join(result[::-1])
+                    print(result)
                 else:
                     return_errors("2")
             except:

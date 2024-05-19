@@ -7,10 +7,12 @@ client = TelegramClient("anon", API_ID, API_HASH)
 
 def return_errors(error: str) -> None:
     errors = {
-        "1": "Введён некоректный номер чата, либо отсутствует подключение к интернету",
-        "2": "Введён некоректный номер чата",
+        "1": "\nВведён некоректный номер чата, либо отсутствует подключение к интернету",
+        "2": "\nВведён некоректный номер чата",
+        "3": "\nВведён некоректный id пользователя",
+        "4": "\nПользователя с введённым id не найдено"
     }
-    print("Ошибка:", errors[error])
+    print("\nОшибка:", errors[error])
     return True
 
 async def get_chat_names(chat: list) -> list:
@@ -100,11 +102,20 @@ async def main() -> None:
             except:
                 return_errors("1")
         elif x == "2":
-            user_id = int(input("\nВведите id чата: "))
-            message = input("\nВведите текст сообщения: ")
-            t = input("\nВы действительно хотите отправить сообщение (Да/нет)")
-            if t.lower() == 'да':
-                await client.send_message(user_id, message)
+            flag = True
+            try:
+                user_id = int(input("\nВведите id пользователя: "))
+            except:
+                return_errors("3")
+                flag = False
+            if flag:
+                message = input("\nВведите текст сообщения: ")
+                t = input("\nВы действительно хотите отправить сообщение (Да/нет): ")
+                if t.lower() == 'да':
+                    try:
+                        await client.send_message(user_id, message)
+                    except ValueError:
+                        return_errors("4")
         elif x == "3":
             chats = await get_chats()
         elif x == "4":

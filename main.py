@@ -50,6 +50,7 @@ async def main() -> None:
                 chat_id = int(input("\nВведите номер чата: "))
                 if 0 < chat_id < len(chats):
                     names = await get_chat_names(chats[chat_id - 1])
+                    print(names)
                     mess_count = int(input("\nЧисло сообщений: "))
                     print(f"\nЧат { chats[chat_id - 1][1] }")
                     result = []
@@ -99,7 +100,11 @@ async def main() -> None:
             except:
                 return_errors("1")
         elif x == "2":
-            pass
+            user_id = int(input("\nВведите id чата: "))
+            message = input("\nВведите текст сообщения: ")
+            t = input("\nВы действительно хотите отправить сообщение (Да/нет)")
+            if t.lower() == 'да':
+                await client.send_message(user_id, message)
         elif x == "3":
             chats = await get_chats()
         elif x == "4":

@@ -1,5 +1,6 @@
 
 from telethon import TelegramClient
+from telethon.tl.types import User, Channel
 from telethon.tl.functions.users import GetFullUserRequest
 from config import API_ID, API_HASH
 
@@ -17,14 +18,12 @@ def return_errors(error: str) -> None:
 
 async def get_chat_names(chat: list) -> list:
     names = {}
-    #
-    # Желательно переделать на условную конструкцию с проверкой на то является ли чат группой
-    #
-    try:
-        for name in await client.get_participants(chat[0]):
-            names[name.id] = name.first_name
-    except:
-        names[chat[0]] = chat[1]
+    chat_metadata = await client.get_entity(chat[0])
+    if type(chat_metadata) == Channel:
+        if chat_metadata.to_dict()["megagroup"] == True:
+            for name in await client.get_participants(chat[0]):
+                names[name.id] = name.first_name
+    names[chat[0]] = chat[1]
     me = (await client(GetFullUserRequest("me"))).to_dict()
     names[me["full_user"]["id"]] = me["users"][0]["first_name"]
     return names

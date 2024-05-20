@@ -78,17 +78,34 @@ async def main() -> None:
                                 try:
                                     if data["media"] != None:
                                         media = "~document~"
-                                        if data["media"]["video"] != False:
-                                            media += "video~"
-                                        if data["media"]["voice"] != False:
-                                            media += "voice~"
-                                        if data["media"]["round"] != False:
-                                            media += "round~"
-                                        if data["media"]["document"] != False:
-                                            if data["media"]["document"]["mime_type"] == "image/webp" or data["media"]["document"]["mime_type"] == "video/webp":
-                                                media += "sticker~"
-                                            elif data["media"]["document"]["mime_type"] == "":
-                                                media += '"' + data["media"]["document"]["attributes"][0]["file_name"] + '"~'
+                                        try:
+                                            if data["media"]["video"] != False:
+                                                media += "video~"
+                                        except:
+                                            pass
+                                        try:
+                                            if data["media"]["voice"] != False:
+                                                media += "voice~"
+                                        except:
+                                            pass
+                                        try:
+                                            if data["media"]["round"] != False:
+                                                media += "round~"
+                                        except:
+                                            pass
+                                        try:
+                                            if data["media"]["photo"] != False:
+                                                media += "photo~"
+                                        except:
+                                            pass
+                                        try:
+                                            if data["media"]["document"] != False:
+                                                if data["media"]["document"]["mime_type"] == "image/webp" or data["media"]["document"]["mime_type"] == "video/webp":
+                                                    media += "sticker~"
+                                                elif data["media"]["document"]["mime_type"] == "":
+                                                    media += '"' + data["media"]["document"]["attributes"][0]["file_name"] + '"~'
+                                        except:
+                                            pass
                                     text += media
                                 except:
                                     pass

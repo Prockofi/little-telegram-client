@@ -53,9 +53,14 @@ async def main() -> None:
                 chat_id = int(input("\nВведите номер чата: "))
                 if 0 < chat_id < len(chats):
                     names = await get_chat_names(chats[chat_id - 1])
-                    print(names)
                     mess_count = int(input("\nЧисло сообщений: "))
-                    print(f"\nЧат { chats[chat_id - 1][1] }")
+                    line_break = 0
+                    for item in list(names.items()):
+                        if line_break % 5 == 0:
+                            print()
+                        print(item[1] + ': ' + str(item[0]), end=',  ')
+                        line_break += 1
+                    print(f"\n\nЧат { chats[chat_id - 1][1] }")
                     result = []
                     count = 0
                     async for message in client.iter_messages(chats[chat_id - 1][0]):
